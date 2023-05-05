@@ -89,6 +89,7 @@ window.addEventListener("load",()=>{
         if (result["data"]!=null){
             booking.style.display = "block";
             login.style.display = "none";
+            member.style.display = "block";
             logout.style.display = "block";
         }else if(result["error"]){
             booking.style.display = "block";
@@ -136,5 +137,26 @@ logout.addEventListener("click", ()=>{
         if (result["ok"]){
             location.reload()
         }
+    })
+})
+
+// 取得資料庫中的頭貼網址
+window.addEventListener("load", ()=>{
+    fetch("/api/memberdata", {
+        method:"GET",
+    }).then((response)=>{
+        return response.json()
+    }).then((result)=>{
+        function getIcon(imageUrl){
+            const memberIcon = document.querySelector(".membericon");
+            memberIcon.style.backgroundImage = `url('${imageUrl}')`;
+        }
+        let imageUrl;
+        if(result['key'] === 'default_icon'){
+            imageUrl = "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/user.png"
+        }else{
+            imageUrl= "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/" + result['key'];
+        }
+        getIcon(imageUrl);
     })
 })

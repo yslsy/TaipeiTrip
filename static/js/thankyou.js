@@ -11,6 +11,7 @@ window.addEventListener("load", ()=>{
         document.querySelector(".booking").style.display = "block";
         document.getElementById("login").style.display = "none";
         document.getElementById("logout").style.display = "block";
+        document.getElementById("member").style.display = "block";
     })
 
     // 訂單編號資料
@@ -32,6 +33,25 @@ window.addEventListener("load", ()=>{
         document.querySelectorAll(".thankyoucontact")[5].textContent = result["data"]["trip"]["attraction"]["address"];
         document.querySelectorAll(".thankyoucontact")[6].textContent = result["data"]["price"];
     })
+
+    // 取得資料庫中的頭貼網址
+    fetch("/api/memberdata", {
+        method:"GET",
+    }).then((response)=>{
+        return response.json()
+    }).then((result)=>{
+        function getIcon(imageUrl){
+            const memberIcon = document.querySelector(".membericon");
+            memberIcon.style.backgroundImage = `url('${imageUrl}')`;
+        }
+        let imageUrl;
+        if(result['key'] === 'default_icon'){
+            imageUrl = "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/user.png"
+        }else{
+            imageUrl= "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/" + result['key'];
+        }
+        getIcon(imageUrl);
+    })
 })
 
 // 點選預定行程
@@ -47,4 +67,9 @@ document.querySelector(".booking").addEventListener("click", ()=>{
             loginModal.style.display = "block"
         }
     })
+})
+
+// 點選會員中心
+document.querySelector(".member").addEventListener("click", ()=>{
+    window.location.href="/memberdata"
 })

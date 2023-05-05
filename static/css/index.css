@@ -34,6 +34,7 @@ body {
 }
 .booking,
 .signin_signup,
+.member,
 .logout {
   font-family: "Noto Sans TC";
   font-weight: 500;
@@ -45,8 +46,20 @@ body {
 }
 .booking:hover,
 .signin_signup:hover,
+.member:hover,
 .logout:hover {
   color: #969494;
+}
+.membericon {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin-right: 2px;
+  margin-top: 1px;
 }
 .welcome{
   display: flex;

@@ -144,3 +144,29 @@ document.querySelector(".booking").addEventListener("click", ()=>{
         }
     })
 })
+
+// 點選會員中心
+document.querySelector(".member").addEventListener("click", ()=>{
+    window.location.href="/memberdata"
+})
+
+// 取得資料庫中的頭貼網址
+window.addEventListener("load", ()=>{
+    fetch("/api/memberdata", {
+        method:"GET",
+    }).then((response)=>{
+        return response.json()
+    }).then((result)=>{
+        function getIcon(imageUrl){
+            const memberIcon = document.querySelector(".membericon");
+            memberIcon.style.backgroundImage = `url('${imageUrl}')`;
+        }
+        let imageUrl;
+        if(result['key'] === 'default_icon'){
+            imageUrl = "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/user.png"
+        }else{
+            imageUrl= "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/" + result['key'];
+        }
+        getIcon(imageUrl);
+    })
+})

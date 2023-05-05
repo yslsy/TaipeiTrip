@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "utf-8" name="viewport" content="width=device-width, initial-scale = 1" />
+        <title>台北一日遊</title>
+        <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/index.css')}}" />
+        <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/member.css')}}" />
+        <link type="text/css" rel="stylesheet" href="{{url_for('static', filename='css/memberdata.css')}}" />
+    </head>
+    <body>
+        <div class="outtoptitle">
+            <div class="toptitle">
+                <div class="theme" onclick="toindex()">台北一日遊</div>
+                <div class="booking">預定行程</div>
+                <div id="login" class="signin_signup">登入/註冊</div>
+                <div id="member" class="member"><div class="membericon"></div>會員中心</div>
+                <div id="logout" class="logout">登出</div>
+            </div>
+        </div>
+        <hr style="background-color:#E8E8E8;border: 0;height: 1px;" />
+        <div class="middlecontainor">
+            <div class="imagebox">
+                <div id="memberpic" class="memberpic" onclick="document.getElementById('file').click()"></div>
+                <form id="picinput"  method="post" enctype="multipart/form-data">
+                    <label for="file"></label>
+                    <input id='file' type="file" name="file" class="profile-pic-input" style="display: none;">
+                    <input class="upload_icon_botton" type="submit" value="點擊上傳新的大頭貼">
+                </form>
+            </div>
+            <hr style="background-color:#E8E8E8;border: 0;height: 1px;" />
+            <div class="ordercontainor">
+                <div class="ordertitle">歷史訂單</div>
+                <div class="orderdiv" id="orderdiv"></div>
+                <div class="ordermodal">
+                    <div class="orderdetailbox">
+                        <div class="top"></div>
+                        <span class="close">&times;</span>
+                        <div class="detailtitle">訂單詳細資訊</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="../js/index.js"></script>
+    <script src="../js/member.js"></script>
+    <script src="../js/memberdata.js"></script>
+</html>

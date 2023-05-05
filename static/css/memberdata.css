@@ -1,0 +1,148 @@
+body {
+    position: relative;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: auto;
+    font-family: "Noto Sans TC";
+    width: 100%;
+    height: 100%;
+}
+.middlecontainor {
+    font-family: "Noto Sans TC";
+    text-align: center;
+    margin-bottom: 50px;
+}
+.imagebox {
+    display: inline-flex;
+    width: 1200px;
+    font-size: 16px;
+    align-items: center;
+}
+.memberpic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    margin: 10px 10px 10px 0;
+}
+.membericon {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-right: 2px;
+    margin-top: 1px;
+}
+.upload_icon_botton {
+    width: 200px;
+    height: 36px;
+    background: #448899;
+    border-radius: 5px;
+    color:#FFFFFF;
+    font-size: 19px;
+    border: 0;
+    cursor: pointer;
+}
+.ordertitle {
+    font-size: 25px;
+    font-weight: bold;
+    margin: 0px auto;
+    margin: 20px 0 20px 0;
+}
+.orderdiv {
+    width: 1200px;
+    margin: 0px auto;
+}
+.titlesBox {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #448899;
+    color: white;
+    border-radius: 5px;
+}
+.noOrderBox {
+    height: 100px;
+    font-size: 16px;
+    display: none;
+    padding-top: 50px;
+    border: solid 0.01px;
+    border-color: rgb(235, 231, 231);
+}
+.titlesElement {
+    border: solid 0.05px;
+    border-color: white;
+}
+.orderbox {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    font-size: 16px;
+}
+.orderElement {
+    border: solid 0.01px;
+    border-color: rgb(235, 231, 231);
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.ordermodal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+.orderdetailbox {
+    display: none;
+    width: 340px;
+    background-color: white;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px 5px 0px 0px;
+}
+.top{
+    margin: auto;
+    width: 340px;
+    height: 10px;
+    background: linear-gradient(270deg, #337788 0%, #66AABB 100%);
+    border-radius: 5px 5px 0px 0px;
+}
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    padding-right: 7px;
+}
+.detailtitle {
+    font-family: "Noto Sans TC";
+    font-size: 24px;
+    font-weight: 700;
+    width: 340px;
+    padding: 5px;
+}
+.orderInfobox {
+    font-size: 18px;
+    padding: 2px;
+    margin-bottom: 5px;
+}
+@media(max-width: 1200px){
+    .imagebox,.orderdiv {
+        width: 80%;
+    }
+}

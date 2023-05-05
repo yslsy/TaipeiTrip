@@ -6,13 +6,19 @@ from mysql.connector import Error
 from mysql.connector import pooling
 import os
 from dotenv import load_dotenv
+import uuid,boto3
 
-load_dotenv('./key.env')
+load_dotenv('./.env')
 
 TOKEN_SECRET_KEY = os.getenv("TOKEN_SECRET_KEY")
 MYSQLUSER = os.getenv("MYSQLUSER")
 MYSQLPASSWORD = os.getenv("MYSQLPASSWORD")
 TAPPAY_PARTNER_KEY = os.getenv("TAPPAY_PARTNER_KEY")
+aws_access_key_id = os.getenv("aws_access_key_id")
+aws_secret_access_key = os.getenv("aws_secret_access_key")
+S3_BUCKETNAME = os.getenv("S3_BUCKETNAME")
+BUCKET_FILENAME = os.getenv("BUCKET_FILENAME")
+TAPPAY_MERCHANT_ID = os.getenv("TAPPAY_MERCHANT_ID")
 
 app=Flask(
 	__name__,
@@ -23,6 +29,11 @@ app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config["SECRET_KEY"] = "TOKEN_SECRET_KEY"
 app.config["PARTNER_KEY"] = TAPPAY_PARTNER_KEY
+app.config["aws_access_key_id"] = aws_access_key_id
+app.config["aws_secret_access_key"] = aws_secret_access_key
+app.config["S3_BUCKETNAME"] = S3_BUCKETNAME
+app.config["BUCKET_FILENAME"]= BUCKET_FILENAME
+app.config["TAPPAY_MERCHANT_ID"]= TAPPAY_MERCHANT_ID
 
 connection_pool = pooling.MySQLConnectionPool(
     pool_name = "pynative_pool",
@@ -33,6 +44,11 @@ connection_pool = pooling.MySQLConnectionPool(
     user = MYSQLUSER,
     password = MYSQLPASSWORD,
     charset = "utf-8"
+)
+
+S3 = boto3.client('s3',
+  aws_access_key_id= aws_access_key_id,
+  aws_secret_access_key= aws_secret_access_key
 )
 
 # Pages
@@ -48,6 +64,9 @@ def booking():
 @app.route("/thankyou")
 def thankyou():
 	return render_template("thankyou.html")
+@app.route("/memberdata")
+def memberdata():
+	return render_template("memberdata.html")
 
 # 取得景點資料列表
 @app.route("/api/attractions", methods=["GET"])
@@ -437,7 +456,7 @@ def postorder():
 		order_data = json.dumps({
 			"prime": data["prime"],
 			"partner_key": app.config["PARTNER_KEY"],
-			"merchant_id": "yslsy224_CTBC",
+			"merchant_id": TAPPAY_MERCHANT_ID,
 			"amount": data["order"]["price"],
 			"currency": "TWD",
 			"details": "order test",
@@ -554,6 +573,132 @@ def getorder(orderNumber):
 	finally:
 		cursor.close()
 		connection_object.close()
+
+# 取得歷史訂單
+@app.route('/api/payedorder', methods=['GET'])
+def get_payedorder():
+	# 驗證是否登入
+	get_token = request.cookies.get("token")
+	connection_object = connection_pool.get_connection()
+	cursor = connection_object.cursor()
+	try:
+		decodedtoken = jwt.decode(get_token, app.config["SECRET_KEY"], algorithms=['HS256'])
+		cursor.execute(("SELECT * FROM payedorder WHERE useremail = %s"), (decodedtoken['email'],))
+		orderdata = cursor.fetchall()
+		if orderdata:
+			return jsonify({
+				"data":orderdata
+			})
+		else:
+			return jsonify({
+				"data": None
+			})
+	except Exception as e:
+		print(e)
+		return jsonify({
+			"error": True,
+			"message": "未登入系統，拒絕存取"
+		}), 403
+	finally:
+		cursor.close()
+		connection_object.close()
+
+# 上傳大頭貼圖片到S3並存進資料庫
+@app.route('/api/memberdata', methods=['PATCH'])
+def patch_memberdata():
+	# 驗證是否登入
+	get_token = request.cookies.get("token")
+	connection_object = connection_pool.get_connection()
+	cursor = connection_object.cursor()
+	try:
+		decodedtoken = jwt.decode(get_token, app.config["SECRET_KEY"], algorithms=['HS256'])
+		file = request.files['file']
+		filename = file.filename.split('.')[0]
+		filemimetype = file.filename.split('.')[1]
+		key = str(uuid.uuid4()) + '-' + filename
+		S3.upload_fileobj(file, S3_BUCKETNAME, BUCKET_FILENAME + key, ExtraArgs={
+			'ContentType': filemimetype,
+			'ACL': 'public-read'
+			})
+		# 圖片網址存進資料庫
+		cursor.execute(("SELECT email FROM memberpic WHERE email = %s"), (decodedtoken['email'],))
+		check_user = cursor.fetchone()
+		if check_user:
+			cursor.execute(("UPDATE memberpic SET memberpic = %s WHERE email = %s"), (key, decodedtoken['email'],))
+			connection_object.commit()
+			return jsonify({"key":key})
+		else:
+			cursor.execute(("INSERT INTO memberpic(email,memberpic)VALUES (%s, %s)"), (decodedtoken['email'], key,))
+			connection_object.commit()
+			return jsonify({"key":key})
+	except Exception as e:
+		print(e)
+		return jsonify({
+			"error": True,
+			"message": "未登入系統，拒絕存取"
+		}), 403
+	finally:
+		cursor.close()
+		connection_object.close()
+
+# 載入頁面時顯示大頭貼
+@app.route('/api/memberdata', methods=['GET'])
+def get_memberdata():
+	# 驗證是否登入
+	get_token = request.cookies.get("token")
+	connection_object = connection_pool.get_connection()
+	cursor = connection_object.cursor()
+	try:
+		decodedtoken = jwt.decode(get_token, app.config["SECRET_KEY"], algorithms=['HS256'])
+		cursor.execute(("SELECT * FROM memberpic WHERE email = %s"), (decodedtoken['email'],))
+		check_user = cursor.fetchone()
+		if check_user:
+			return jsonify({
+				"key":check_user[2],
+				"bucketname": S3_BUCKETNAME,
+				"filename": BUCKET_FILENAME
+			})
+		else:
+			# default_icon
+			return jsonify({
+				"key":"default_icon",
+				"bucketname": S3_BUCKETNAME,
+				"filename": BUCKET_FILENAME
+			})
+	except Exception as e:
+		print(e)
+		return jsonify({
+			"error": True,
+			"message": "未登入系統，拒絕存取"
+		}), 403
+	finally:
+		cursor.close()
+		connection_object.close()
+
+# 取得訂單詳細
+@app.route('/api/orderdetail', methods=['POST'])
+def get_orderdetail():
+	get_token = request.cookies.get("token")
+	connection_object = connection_pool.get_connection()
+	cursor = connection_object.cursor()
+	try:
+		decodedtoken = jwt.decode(get_token, app.config["SECRET_KEY"], algorithms=['HS256'])
+		data = request.get_json()
+		cursor.execute(("SELECT * FROM payedorder WHERE ordernumber = %s"), (data["order_Id"],))
+		orderdata = cursor.fetchone()
+		return jsonify({
+			"data":orderdata
+		})
+	except Exception as e:
+		print(e)
+		return jsonify({
+			"error": True,
+			"message": "未登入系統，拒絕存取"
+		}), 403
+	finally:
+		cursor.close()
+		connection_object.close()
+
 
 
 
