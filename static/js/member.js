@@ -99,13 +99,19 @@ window.addEventListener("load",()=>{
     })
 })
 
+function validateEmail(email) {
+    var myreg = /^[^\[\]\(\)\\<>:;,@.]+[^\[\]\(\)\\<>:;,@]*@[a-z0-9A-Z]+(([.]?[a-z0-9A-Z]+)*[-]*)*[.]([a-z0-9A-Z]+[-]*)+$/g;
+    return myreg.test(email)
+}
+
 // 註冊新帳戶
 signupform.addEventListener("submit",(e)=>{
     e.preventDefault()
     if (signupUser.value === "" && signupEmail.value === "" && signupPassword.value === ""){
         signupText.textContent = "請輸入註冊資訊"
-    }
-    else{
+    }else if (!validateEmail(signupEmail.value)) {
+        signupText.textContent = "請輸入有效的E-mail！"
+    }else{
         fetch("/api/user",{
             method: "POST",
             headers: {"Content-Type": "application/json"},
