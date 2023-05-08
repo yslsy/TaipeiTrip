@@ -1,6 +1,18 @@
 body {
     font-family: "Noto Sans TC";
 }
+.loadingDiv {
+    width: 1000px;
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 auto;
+    color: #666666;
+    padding: 50px 25px 25px 25px;
+    height: 62.3vh;
+}
+.bookingMiddleBox {
+    display: none;
+}
 .welcomeblock {
     width: 1000px;
     font-size: 19px;
@@ -114,6 +126,7 @@ input[type=text] {
     font-size: 16px;
     font-weight: 500;
     padding-bottom: 25px;
+    height: 54.8vh;
 }
 .bookingfooter {
     height: 20%;

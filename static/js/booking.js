@@ -1,4 +1,13 @@
 let trip;
+const loadingDiv = document.querySelector(".loadingDiv");
+const bookingMiddleBox = document.querySelector(".bookingMiddleBox");
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector(".booking").style.display = "block";
+    document.getElementById("login").style.display = "none";
+    document.getElementById("logout").style.display = "block";
+    document.getElementById("member").style.display = "block";
+  });
 
 // 載入頁面
 window.addEventListener("load", ()=>{
@@ -31,21 +40,15 @@ window.addEventListener("load", ()=>{
     .then((response)=>{
         return response.json()
     }).then((result)=>{
+        loadingDiv.style.display = "none"
+        bookingMiddleBox.style.display = "block"
         if (result["data"] == null){
             document.querySelector(".welcomeblock").style.display = "block";
             document.querySelector(".bookcontainor").style.display = "none";
             document.querySelector(".nobooking").style.display = "block";
-            document.querySelector(".booking").style.display = "block";
-            document.getElementById("login").style.display = "none";
-            document.getElementById("logout").style.display = "block";
-            document.getElementById("member").style.display = "block";
         }else{
             document.querySelector(".welcomeblock").style.display = "block";
             document.querySelector(".bookcontainor").style.display = "block";
-            document.querySelector(".booking").style.display = "block";
-            document.getElementById("login").style.display = "none";
-            document.getElementById("logout").style.display = "block";
-            document.getElementById("member").style.display = "block";
             // 景點圖片
             const imageContainer = document.querySelector(".tourimage")
             const tourImage = document.createElement("img");
