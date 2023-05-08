@@ -73,3 +73,16 @@ document.querySelector(".booking").addEventListener("click", ()=>{
 document.querySelector(".member").addEventListener("click", ()=>{
     window.location.href="/memberdata"
 })
+
+// 點選登出
+document.getElementById("logout").addEventListener("click", ()=>{
+    fetch("/api/user/auth", {
+        method: "DELETE",
+    }).then((response)=>{
+        return response.json()
+    }).then((result)=>{
+        if (result["ok"]){
+            window.location.href="/"
+        }
+    })
+})
