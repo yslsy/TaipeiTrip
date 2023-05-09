@@ -49,6 +49,11 @@ TPDirect.card.setup({
     }
 })
 
+function validateEmail(email) {
+    var myreg = /^[^\[\]\(\)\\<>:;,@.]+[^\[\]\(\)\\<>:;,@]*@[a-z0-9A-Z]+(([.]?[a-z0-9A-Z]+)*[-]*)*[.]([a-z0-9A-Z]+[-]*)+$/g;
+    return myreg.test(email)
+}
+
 // 按下確認訂購並付款的按鈕
 const payingButton = document.querySelector(".payingbutton")
 payingButton.addEventListener("click", (event)=>{
@@ -58,6 +63,8 @@ payingButton.addEventListener("click", (event)=>{
     let contactPhone = document.querySelector("#phone").value;
     if (contactName == "" || contactEmail == "" || contactPhone == ""){
         alert("請輸入聯絡人資訊！")
+    }else if (!validateEmail(contactEmail)) {
+        alert("請輸入有效的E-mail！")
     }else{
         // Get prim
         TPDirect.card.getPrime((result) =>{

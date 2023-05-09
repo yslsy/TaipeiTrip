@@ -626,11 +626,19 @@ def patch_memberdata():
 		if check_user:
 			cursor.execute(("UPDATE memberpic SET memberpic = %s WHERE email = %s"), (key, decodedtoken['email'],))
 			connection_object.commit()
-			return jsonify({"key":key})
+			return jsonify({
+				"key":key,
+				"bucketname": S3_BUCKETNAME,
+				"filename": BUCKET_FILENAME
+			})
 		else:
 			cursor.execute(("INSERT INTO memberpic(email,memberpic)VALUES (%s, %s)"), (decodedtoken['email'], key,))
 			connection_object.commit()
-			return jsonify({"key":key})
+			return jsonify({
+				"key":key,
+				"bucketname": S3_BUCKETNAME,
+				"filename": BUCKET_FILENAME
+			})
 	except Exception as e:
 		print(e)
 		return jsonify({

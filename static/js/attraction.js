@@ -100,34 +100,42 @@ inputlistArray[1].addEventListener("change",(e)=>{
     }
 })
 
+function isValidDate(date){
+    return new Date().getTime() <= new Date(date).getTime()
+}
+
 // 點擊按鈕預定行程
 const bookbtn = document.querySelector(".bookbtn")
 bookbtn.addEventListener("click", ()=>{
-    fetch("/api/booking",{
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            attractionId: pathId,
-            date: document.getElementById("mydate").value,
-            time: document.querySelector("[name=time]:checked").value,
-            price: document.querySelector(".price").textContent,
+    if (!isValidDate(document.getElementById("mydate").value)){
+        alert("請預定正確旅遊時間，上半天旅遊為早上九點開始，下半天旅遊為下午一點開始。")
+    }else{
+        fetch("/api/booking",{
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                attractionId: pathId,
+                date: document.getElementById("mydate").value,
+                time: document.querySelector("[name=time]:checked").value,
+                price: document.querySelector(".price").textContent,
+            })
+        }).then((response)=>{
+            return response.json()
+        }).then((result)=>{
+            if (result["ok"]){
+                window.location.href="/booking"
+            }
+            else if(result["message"] === "未登入系統，拒絕存取"){
+                loginModal.style.display = "block"
+            }
+            else if(result["message"] === "未選擇日期"){
+                alert("請選擇日期！")
+            }
+            else{
+                alert(result["message"])
+            }
         })
-    }).then((response)=>{
-        return response.json()
-    }).then((result)=>{
-        if (result["ok"]){
-            window.location.href="/booking"
-        }
-        else if(result["message"] === "未登入系統，拒絕存取"){
-            loginModal.style.display = "block"
-        }
-        else if(result["message"] === "未選擇日期"){
-            alert("請選擇日期！")
-        }
-        else{
-            alert(result["message"])
-        }
-    })
+    }
 })
 
 // 點選預定行程

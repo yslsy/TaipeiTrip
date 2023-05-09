@@ -142,7 +142,7 @@ document.getElementById("picinput").addEventListener("submit", (event)=>{
             return response.json()
         }).then((result)=>{
             if (result){
-                const imageUrl = "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/" + result['key'];
+                const imageUrl = "https://"+result['bucketname']+".s3.us-west-1.amazonaws.com/"+result['filename'] + result['key'];
                 const memberImage = document.getElementById("memberpic");
 		        memberImage.style.backgroundImage = `url('${imageUrl}')`;
             }
@@ -172,7 +172,7 @@ function handleOrderDetailClick(event) {
             orderDetailbox.style.display = "block";
             ordermodal.style.display = "block";
 
-            const time = result["data"][8] === "morning" ? "上午十點" : "下午兩點";
+            const time = result["data"][8] === "morning" ? "上午九點" : "下午一點";
             const orderInfo = [
                 {text: "訂單編號："+result["data"][1]},
                 {text: "訂單金額："+result["data"][2]},
