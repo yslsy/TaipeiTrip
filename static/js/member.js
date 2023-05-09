@@ -159,9 +159,9 @@ window.addEventListener("load", ()=>{
         }
         let imageUrl;
         if(result['key'] === 'default_icon'){
-            imageUrl = "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/user.png"
+            imageUrl = "https://"+result['bucketname']+".s3.us-west-1.amazonaws.com/"+result['filename']+"user.png"
         }else{
-            imageUrl= "https://fourysl.s3.us-west-1.amazonaws.com/tourmember/" + result['key'];
+            imageUrl= "https://"+result['bucketname']+".s3.us-west-1.amazonaws.com/"+result['filename']+result['key'];
         }
         getIcon(imageUrl);
     })
